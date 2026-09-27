@@ -1,3 +1,7 @@
+# ============================================================
+# EKS CLUSTER
+# ============================================================
+
 variable "cluster_name" {
   description = "EKS cluster name"
   type        = string
@@ -8,20 +12,28 @@ variable "kubernetes_version" {
   type        = string
 }
 
+# ============================================================
+# NETWORK
+# ============================================================
+
 variable "vpc_id" {
-  description = "VPC ID for the EKS cluster"
+  description = "VPC ID"
   type        = string
 }
 
 variable "private_subnet_ids" {
-  description = "Private subnet IDs for worker nodes"
+  description = "Private subnet IDs"
   type        = map(string)
 }
 
 variable "control_plane_subnet_ids" {
-  description = "Subnets for the EKS control plane"
+  description = "Control plane subnet IDs"
   type        = map(string)
 }
+
+# ============================================================
+# EKS API ENDPOINT
+# ============================================================
 
 variable "endpoint_public_access" {
   description = "Enable public EKS API endpoint"
@@ -34,69 +46,106 @@ variable "endpoint_private_access" {
 }
 
 variable "public_access_cidrs" {
-  description = "Allowed CIDRs for public EKS API endpoint"
+  description = "CIDR blocks allowed to access the public EKS endpoint"
   type        = list(string)
 }
 
-# ------------------------------------------------------------
-# Existing EKS cluster IAM role
-# ------------------------------------------------------------
+# ============================================================
+# CLUSTER IAM
+# ============================================================
 
 variable "cluster_iam_role_arn" {
-  description = "Existing IAM role ARN used by the EKS control plane"
+  description = "Existing EKS cluster IAM role ARN"
   type        = string
 }
 
 variable "cluster_iam_role_additional_policies" {
-  description = "Additional IAM policies for the EKS cluster role"
+  description = "Additional policies for EKS cluster IAM role"
   type        = map(string)
-  default     = {}
+
+  default = {}
 }
 
-# ------------------------------------------------------------
-# EKS encryption
-# ------------------------------------------------------------
+# ============================================================
+# KMS
+# ============================================================
 
 variable "create_kms_key" {
   description = "Create KMS key for EKS secrets encryption"
   type        = bool
-  default     = true
+
+  default = true
 }
 
-# ------------------------------------------------------------
-# EKS Add-ons
-# ------------------------------------------------------------
+# ============================================================
+# EKS ADDONS
+# ============================================================
 
 variable "cluster_addons" {
-  description = "EKS managed add-ons"
+  description = "EKS cluster addons"
+
   type = map(object({
     most_recent = optional(bool, true)
   }))
+
   default = {}
 }
 
-# ------------------------------------------------------------
-# EKS managed node groups
-# ------------------------------------------------------------
+# ============================================================
+# EKS NODE GROUPS
+# ============================================================
 
 variable "node_groups" {
   description = "EKS managed node groups"
 
   type = map(object({
+
+    # --------------------------------------------------------
+    # CUSTOM AMI
+    # --------------------------------------------------------
+
+    ami_id = optional(string)
+
+    # --------------------------------------------------------
+    # INSTANCE
+    # --------------------------------------------------------
+
     instance_types = list(string)
+
+    # --------------------------------------------------------
+    # SCALING
+    # --------------------------------------------------------
 
     min_size     = number
     max_size     = number
     desired_size = number
 
+    # --------------------------------------------------------
+    # CAPACITY
+    # --------------------------------------------------------
+
     capacity_type = string
+
+    # --------------------------------------------------------
+    # STORAGE
+    # --------------------------------------------------------
 
     disk_size = number
 
-    # Existing IAM role ARN
+    # --------------------------------------------------------
+    # IAM
+    # --------------------------------------------------------
+
     iam_role_arn = string
 
-    iam_role_additional_policies = optional(map(string), {})
+    iam_role_additional_policies = optional(
+      map(string),
+      {}
+    )
+
+    # --------------------------------------------------------
+    # LAUNCH TEMPLATE
+    # --------------------------------------------------------
 
     launch_template_name = string
   }))
@@ -104,22 +153,24 @@ variable "node_groups" {
   default = {}
 }
 
-# ------------------------------------------------------------
-# EKS access entries
-# ------------------------------------------------------------
+# ============================================================
+# EKS ACCESS ENTRIES
+# ============================================================
 
 variable "access_entries" {
   description = "EKS access entries"
   type        = any
-  default     = {}
+
+  default = {}
 }
 
-# ------------------------------------------------------------
-# Tags
-# ------------------------------------------------------------
+# ============================================================
+# TAGS
+# ============================================================
 
 variable "tags" {
   description = "Tags for EKS resources"
   type        = map(string)
-  default     = {}
+
+  default = {}
 }

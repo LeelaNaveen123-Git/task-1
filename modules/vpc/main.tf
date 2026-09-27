@@ -64,10 +64,10 @@ resource "aws_subnet" "private" {
     {
       Name                              = "${var.name}-private-${each.key}"
       "kubernetes.io/role/internal-elb" = "1"
+      "karpenter.sh/discovery"          = "myapp-dev-main"
     }
   )
 }
-
 # ------------------------------------------------------------
 # NAT Gateway Elastic IP
 # ------------------------------------------------------------

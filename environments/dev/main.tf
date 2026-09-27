@@ -278,3 +278,30 @@ module "eks" {
     }
   )
 }
+
+# ============================================================
+# EKS ADD-ONS
+# ============================================================
+
+module "eks_addons" {
+  source = "../../modules/eks-addons"
+
+  cluster_name = var.eks_addons_cluster_name
+  region       = var.aws_region
+
+  kubernetes_version = var.eks_clusters[
+    "main"
+  ].kubernetes_version
+
+  karpenter_version = var.karpenter_version
+
+  aws_load_balancer_controller_version = (
+    var.aws_load_balancer_controller_version
+  )
+
+  common_tags = var.common_tags
+
+  depends_on = [
+    module.eks
+  ]
+}

@@ -131,6 +131,7 @@ variable "iam_roles" {
   description = "IAM role configuration"
 
   type = map(object({
+
     description = optional(string, null)
 
     trusted_services = list(string)
@@ -143,6 +144,7 @@ variable "iam_roles" {
 
   default = {}
 }
+
 # ============================================================
 # EC2
 # ============================================================
@@ -189,6 +191,10 @@ variable "eks_clusters" {
 
   type = map(object({
 
+    # --------------------------------------------------------
+    # CLUSTER
+    # --------------------------------------------------------
+
     kubernetes_version = string
 
     vpc_name = string
@@ -199,7 +205,7 @@ variable "eks_clusters" {
 
     public_access_cidrs = list(string)
 
-    # Existing EKS cluster IAM role ARN
+    # Existing EKS cluster IAM role
     cluster_iam_role_arn = string
 
     cluster_iam_role_additional_policies = optional(
@@ -210,7 +216,7 @@ variable "eks_clusters" {
     create_kms_key = bool
 
     # --------------------------------------------------------
-    # ADDONS
+    # EKS ADDONS
     # --------------------------------------------------------
 
     cluster_addons = map(object({
@@ -218,24 +224,29 @@ variable "eks_clusters" {
     }))
 
     # --------------------------------------------------------
-    # NODE GROUPS
+    # EKS NODE GROUPS
     # --------------------------------------------------------
 
     node_groups = map(object({
 
+      # Custom AMI
+      ami_id = optional(string)
+
+      # EC2 instance types
       instance_types = list(string)
 
-      min_size = number
-
-      max_size = number
-
+      # Scaling
+      min_size     = number
+      max_size     = number
       desired_size = number
 
+      # Capacity
       capacity_type = string
 
+      # Root volume
       disk_size = number
 
-      # Existing node IAM role ARN
+      # Existing IAM role
       iam_role_arn = string
 
       iam_role_additional_policies = optional(
@@ -243,15 +254,32 @@ variable "eks_clusters" {
         {}
       )
 
+      # Launch template
       launch_template_name = string
     }))
 
     # --------------------------------------------------------
-    # ACCESS ENTRIES
+    # EKS ACCESS ENTRIES
     # --------------------------------------------------------
 
     access_entries = any
   }))
 
   default = {}
+}
+variable "eks_addons_cluster_name" {
+  description = "Existing EKS cluster name used by the EKS add-ons"
+  type        = string
+}
+
+variable "karpenter_version" {
+  description = "Karpenter Helm chart version"
+  type        = string
+  default     = "1.14.1"
+}
+
+variable "aws_load_balancer_controller_version" {
+  description = "AWS Load Balancer Controller Helm chart version"
+  type        = string
+  default     = "3.4.1"
 }

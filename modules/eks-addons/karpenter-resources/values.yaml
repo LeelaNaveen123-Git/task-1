@@ -1,0 +1,15 @@
+clusterName: ""
+nodeRole: ""
+discoveryTag: ""
+
+instanceCategories:
+  - c
+  - m
+  - r
+
+capacityTypes:
+  - on-demand
+
+cpuLimit: "16"
+
+expireAfter: "720h"

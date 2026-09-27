@@ -25,3 +25,7 @@ Thumbs.db
 
 # Logs
 *.log
+
+environments/dev/terraform-state.json
+iam-search.txt
+environments/dev/scale-test.yaml
